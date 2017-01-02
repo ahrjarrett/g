@@ -4,16 +4,18 @@
   "description": "Simplified Ghost Dev Environment",
   "main": "index.js",
   "scripts": {
-    "start": "gulp ghost:start"
+    "start": "gulp ghost"
   },
   "keywords": [],
   "author": "andrew jarrett",
   "repository": "https://github.com/ahrjarrett/g",
   "license": "MIT",
   "devDependencies": {
+    "browser-sync": "^2.18.5",
     "ghost": "^0.9.0",
     "gulp": "^3.9.1",
     "gulp-replace": "^0.5.4",
-    "gulp-sym": "^1.0.2"
+    "gulp-sym": "^1.0.2",
+    "run-sequence": "^1.2.2"
   }
 }
