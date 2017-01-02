@@ -17,7 +17,7 @@ config = {
       port: '2368'
     },
     paths: {
-      contentPath: path.join(__dirname, './node_modules/ghost/content')
+      contentPath: path.join(__dirname, './node_modules/ghost/content/')
     }
   }
 }

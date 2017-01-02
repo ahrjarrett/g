@@ -1,16 +1,19 @@
 {
   "name": "ghost",
-  "version": "1.0.0",
-  "description": "",
+  "version": "0.0.1",
+  "description": "Simplified Ghost Dev Environment",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "gulp ghost:start"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "andrew jarrett",
+  "repository": "https://github.com/ahrjarrett/g",
+  "license": "MIT",
   "devDependencies": {
     "ghost": "^0.9.0",
-    "gulp": "^3.9.1"
+    "gulp": "^3.9.1",
+    "gulp-replace": "^0.5.4",
+    "gulp-sym": "^1.0.2"
   }
 }
