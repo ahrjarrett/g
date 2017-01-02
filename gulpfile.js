@@ -1,9 +1,11 @@
 var gulp = require('gulp')
 var browserSync = require('browser-sync').create()
+var concat = require('gulp-concat')
 var ghost = require('ghost')
 var path = require('path')
 var replace = require('gulp-replace')
 var runSequence = require('run-sequence')
+var sass = require('gulp-sass')
 var symlink = require('gulp-sym')
 var g
 
@@ -36,23 +38,36 @@ gulp.task('browsersync:reload', function(cb){
 
 gulp.task('ghost', ['ghost:start'], function(cb) {
   gulp.watch('app/**/*.hbs', ['browsersync:reload'])
+  gulp.watch('app/assets/scss/**/*.scss', ['sass', 'browsersync:reload'])
 
   cb()
 })
 
 
 gulp.task('ghost:start', function(cb){
-  g = ghost({
-    config: path.join(__dirname, './ghost-dev-config.js')
-  })
+  runSequence('sass', function(){
 
-  g.then(function(ghostServer){
-    ghostServer.start().then(function(){
-      runSequence('browsersync')
+    g = ghost({
+      config: path.join(__dirname, './ghost-dev-config.js')
     })
-  })
 
-  cb()
+    g.then(function(ghostServer){
+      ghostServer.start().then(function(){
+        runSequence('browsersync')
+      })
+    })
+
+    cb()
+  })
+})
+
+
+gulp.task('sass', function(){
+  return gulp.
+    src('app/assets/scss/**/*.scss').
+    pipe(sass()).
+    pipe(concat('screen.css')).
+    pipe(gulp.dest('app/assets/css/'))
 })
 
 
