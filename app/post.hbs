@@ -1,83 +1,78 @@
 {{!< default}}
 
-{{! The comment above "< default" means - insert everything in this file into
-    the {body} of the default.hbs template, which contains our header/footer. }}
+<div class="wrap {{post_class}}">
+    <section class="blog-content">
 
-{{! Everything inside the #post tags pulls data from the post }}
-{{#post}}
+        <article>
+        {{#post}}
 
-<header class="main-header post-head">
-    <nav class="main-nav clearfix">
-        {{#if @blog.logo}}<a class="blog-logo" href="{{@blog.url}}"><img src="{{@blog.logo}}" alt="{{@blog.title}}" /></a>{{/if}}
-        {{#if @blog.navigation}}
-            <a class="hidden menu-button icon-menu" href="#"><span class="word">Menu</span></a>
-        {{/if}}
-    </nav>
-</header>
-
-<main class="content" role="main">
-    <article class="{{post_class}}">
-
-        <header class="post-header">
-            <h1 class="post-title">{{title}}</h1>
-            <p class="subtitle">
-                {{#if image}}
-                <figure class="author-image">
-                    <a class="img" href="{{url}}" style="background-image: url({{image}})"><span class="hidden">{{name}}'s Picture</span></a>
-                </figure>
-                {{/if}}
-                {{author}}
-            </p>
-            <div class="post-meta post-meta-post">
-                <time class="post-date" datetime="{{date format='YYYY-MM-DD'}}">{{date format="DD MMMM YYYY"}}</time> {{tags prefix=" regarding "}}
+            {{! If post is featured and has an image, make a big hero banner }}
+            {{#if image}}{{#if featured}}
+            <div class="hero">
+                <div class="hero-image" style="background-image: url({{image}});"></div>
             </div>
-        </header>
+            {{/if}}{{/if}}
 
-        <section class="post-content">
-            {{content}}
-        </section>
+            <a class="post-meta back-link" href="{{@blog.url}}">&larr; Back to the front page</a>
 
-        <footer class="post-footer">
+            <h1 class="post-title">{{{title}}}</h1>
+            <section class="post-meta">
+                <img class="author-img" src="{{author.image}}" alt="Author image" nopin="nopin" />
+                <span class="author-name">{{author}}</span>
+                on the
+                <time datetime="{{date format='YYYY-MM-DD'}}">{{date format="Do of MMMM YYYY"}}</time>
+                <span class="tags">{{tags prefix="in "}}</span>
+            </section>
 
-        {{! Everything inside the #author tags pulls data from the author }}
-        {{#author}}
-            <div class="author">
-                {{#if image}}
-                    <figure class="author-image">
-                        <div class="img" style="background-image: url({{image}})"><span class="hidden">{{name}}'s Picture</span></div>
-                    </figure>
-                {{/if}}
-                <p class="subtitle"><a href="{{url}}">{{name}}</a></p>
-                {{#if bio}}
-                    <p>{{bio}}</p>
-                {{else}}
-                    <p>Read <a href="{{url}}">more posts</a> by this author.</p>
-                {{/if}}
-                <div class="author-meta">
-                    {{#if location}}<span class="author-location icon-location">{{location}}</span>{{/if}}
-                    {{#if website}}<span class="author-link icon-link"><a href="{{website}}">{{website}}</a></span>{{/if}}
-                </div>
-            </div>
-        {{/author}}
+            <section class="post-content">
+                {{#if image}}{{#unless featured}}<img src="{{image}}" alt="Post image" />{{/unless}}{{/if}}
+                {{content}}
+            </section>
 
-            <div class="share">
-                <p class="subtitle">Share this post</p>
-                <a class="icon-twitter" href="https://twitter.com/share?text={{encode title}}&amp;url={{url absolute="true"}}"
-                    onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
-                    <span class="hidden">Twitter</span>
-                </a>
-                <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u={{url absolute="true"}}"
-                    onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
-                    <span class="hidden">Facebook</span>
-                </a>
-                <a class="icon-google-plus" href="https://plus.google.com/share?url={{url absolute="true"}}"
-                   onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
-                    <span class="hidden">Google+</span>
-                </a>
-            </div>
+            <footer class="post-footer">
 
-        </footer>
+                <section class="author">
+                    <div class="author-img">
+                        <img class="author-img" src="{{author.image}}" alt="Author image" nopin="nopin" />
+                    </div>
+                    <div class="author-meta">
+                        <h4>{{author.name}}</h4>
+                        <p>{{{author.bio}}} <a href="{{author.website}}">{{author.website}}</a></p>
+                    </div>
+                </section>
 
-    </article>
-</main>
-{{/post}}
+                {{#next_post}}
+                <section class="read-next">
+                    <a class="read-next-story {{#if image}}" style="background-image: url({{image}}){{else}}no-cover{{/if}}" href="{{url}}">
+                        <section class="post">
+                            <h2>{{title}}</h2>
+                            <p>{{excerpt words="19"}}&hellip;</p>
+                        </section>
+                    </a>
+                </section>
+                {{/next_post}}
+
+                <a class="gh-btn gh-btn-blue gh-btn-block blog-subscribe-btn" data-toggle="modal" data-target="#blogsubscribe"><span>Subscribe to Weekly Posts</span></a>
+
+            </footer>
+
+            <section class="comments">
+                <div id="disqus_thread"></div>
+                <script type="text/javascript">
+                    var disqus_identifier = 'ghost-{{id}}';
+                    (function() {
+                        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                    })();
+                </script>
+            </section>
+
+        {{/post}}
+        </article>
+
+    </section>
+
+    {{> sidebar}}
+
+</div>

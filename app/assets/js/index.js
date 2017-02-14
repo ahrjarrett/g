@@ -1,81 +1,73 @@
-/**
- * Main JS file for Casper behaviours
- */
+/*globals jQuery, document */
 
-/* globals jQuery, document */
-(function ($, undefined) {
-    "use strict";
+// Dropdown Menus
+function initDropdowns(allDropdowns) {
+    allDropdowns.children('.gh-drop-trigger').on('click', function (e) {
+        e.stopPropagation();
 
-    var $document = $(document);
+        var thisTrigger = $(this),
+        thisDropdown = thisTrigger.parent();
 
-    $document.ready(function () {
-
-        var $postContent = $(".post-content");
-        $postContent.fitVids();
-
-        $(".menu-button, .nav-cover, .nav-close").on("click", function(e){
-            e.preventDefault();
-            $("body").toggleClass("nav-opened nav-closed");
-        });
-
-        // Convert figure image alt-texts to figcaptions.
-        addFigCaptions();
-
-        // If the window is resized, the footnotes will have to move.
-        $(window).resize(placeFootnotes);
-
-        // Javascript is enabled, replace the no-js menu!
-        noScriptSafeMenu();
+        if (thisDropdown.hasClass('active')) {
+            thisDropdown.removeClass('active');
+            $(document).off('click');
+        } else {
+            allDropdowns.removeClass('active');
+            thisDropdown.addClass('active');
+            $(document).on('click', function () {
+                allDropdowns.removeClass('active');
+            });
+        }
     });
+}
 
-    // Wait to make sure everything is loaded before calculating the locations of footnotes.
-    $(window).load(function() {
-        placeFootnotes();
+(function ($) {
+    'use strict';
+
+    // When all content is loaded, resize dem images
+    $(window).load(function () {
+        function casperFullImg() {
+            $('img').each(function () {
+                var contentWidth = $('.post-content').outerWidth(), // Width of the content
+                    imageWidth = $(this)[0].naturalWidth; // Original image resolution
+
+                if (imageWidth >= contentWidth) {
+                    $(this).addClass('full-img');
+                } else {
+                    $(this).removeClass('full-img');
+                }
+            });
+        };
+
+        casperFullImg();
+        $(window).smartresize(casperFullImg);
     });
+}(jQuery));
 
+(function ($,sr) {
+    // debouncing function from John Hann
+    // http://unscriptable.com/index.php/2009/03/20/debouncing-javascript-methods/
+    var debounce = function (func, threshold, execAsap) {
+        var timeout;
 
-})(jQuery);
+        return function debounced() {
+            var self = this, args = arguments;
+            function delayed() {
+                if (!execAsap) {
+                    func.apply(self, args);
+                }
+                timeout = null;
+            };
 
-var placeFootnotes = function() {
-    var top, prev = null;
-
-    if($(window).width() > 760) {
-
-        $('.footnotes').addClass('footnotes-js');
-        $('.footnotes').removeClass('footnotes');
-        $('.footnote').addClass('footnote-js');
-        $('.footnote').removeClass('footnote');
-
-        $('a[href^="#fnref"]').remove();
-
-        $('.footnotes-js ol li').each(function(index, footnote) {
-            top = Math.floor($('#fnref\\:' + (index+1)).position().top) - Math.floor(parseInt($(footnote).css('fontSize'))*1.5);
-
-            if(prev != null && $(prev).position().top + $(prev).height() > top) {
-                top = Math.floor($(prev).position().top + $(prev).height()) + 10;
+            if (timeout) {
+                clearTimeout(timeout);
+            } else if (execAsap) {
+                func.apply(self, args);
             }
 
-            $(footnote).css('top', top + 'px');
-            prev = footnote;
-        });
-
-        if($('.post-content').height() < top + $(prev).height()) {
-            $('.post-content').height(top + $(prev).height());
-        }
-
+            timeout = setTimeout(delayed, threshold || 100);
+        };
     }
-}
-
-var addFigCaptions = function() {
-    $('.post-content figure img').each(function(index, figure) {
-        var caption = $(figure).attr('alt');
-        $(figure).after('<figcaption>' + caption + '</figcaption>');
-    });
-}
-
-var noScriptSafeMenu = function() {
-    $('body').addClass('js');
-    $('.no-js-nav').addClass('hidden');
-    $('.menu-button').removeClass('hidden');
-    $('.menu-button').css('transition', 'all 0.5s ease;')
-}
+    // smartresize
+    jQuery.fn[sr] = function (fn) {return fn ? this.bind('resize', debounce(fn)) : this.trigger(sr);};
+})(jQuery,'smartresize');
